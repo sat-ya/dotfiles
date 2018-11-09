@@ -83,3 +83,4 @@ case ${OSTYPE} in
 esac
 
 bindkey '^R' history-incremental-pattern-search-backward
+export LESSCHARSET=utf-8
