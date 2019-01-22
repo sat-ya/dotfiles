@@ -1,4 +1,5 @@
 export LANG=ja_JP.UTF-8
+export LESSCHARSET=utf-8
 autoload -Uz colors
 bindkey -v
 HISTFILE=~/.zsh_history
@@ -81,6 +82,3 @@ case ${OSTYPE} in
 		alias ls='ls -F --color=auto'
 		;;
 esac
-
-bindkey '^R' history-incremental-pattern-search-backward
-export LESSCHARSET=utf-8
