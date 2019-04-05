@@ -2,25 +2,6 @@ if v:progname =~? "evim"
         finish
 endif
 
-set nocompatible
-
-" allow backspacing over everything in insert mode
-set backspace=indent,eol,start
-
-if has("vms")
-        set nobackup
-else
-        set backup
-        set undofile
-endif
-set history=50		" keep 50 lines of command line history
-set ruler		" show the cursor position all the time
-set showcmd		" display incomplete commands
-set incsearch		" do incremental searching
-
-" For Win32 GUI: remove 't' flag from 'guioptions': no tearoff menu entries
-" let &guioptions = substitute(&guioptions, "t", "", "g")
-
 " Don't use Ex mode, use Q for formatting
 map Q gq
 
@@ -90,31 +71,98 @@ if has('langmap') && exists('+langnoremap')
         set langnoremap
 endif
 
-" Add optional packages.
-"
-" The matchit plugin makes the % command work better, but it is not backwards
-" compatible.
+"dein Scripts-----------------------------
+
+" Required:
+set runtimepath+=/Users/sat/.cache/dein/repos/github.com/Shougo/dein.vim
+
+" Required:
+if dein#load_state('/Users/sat/.cache/dein')
+        call dein#begin('/Users/sat/.cache/dein')
+
+        " Let dein manage dein
+        " Required:
+        call dein#add('/Users/sat/.cache/dein/repos/github.com/Shougo/dein.vim')
+
+        " http://kyo-bad.hatenablog.com/entry/2016/05/28/172510
+        " ==========================
+        " プラグインリストを収めたTOMLファイル
+        let g:dein_dir = expand('/Users/sat/.cache/dein')
+        let s:toml = g:dein_dir . '/dein.toml'
+        let s:lazy_toml = g:dein_dir . '/dein_lazy.toml'
+
+        " TOMLファイルにpluginを記述
+        call dein#load_toml(s:toml, {'lazy': 0})
+        call dein#load_toml(s:lazy_toml, {'lazy': 1})
+
+        " ==========================
+        " Add or remove your plugins here like this:
+        " call dein#add('Shougo/neosnippet.vim')
+        " call dein#add('Shougo/neosnippet-snippets')
+
+        " Required:
+        call dein#end()
+        call dein#save_state()
+endif
+
+" Required:
+filetype plugin indent on
+syntax enable
+
+" If you want to install not installed plugins onstartup.
+if dein#check_install()
+        call dein#install()
+endif
+
+"End dein Scripts-------------------------
+
+" Setting 非同期文法チェッカ
+" https://wonderwall.hatenablog.com/entry/2017/03/01/223934
+let g:ale_sign_column_always = 1
+highlight clear ALEErrorSign
+highlight clear ALEWarningSign
+" エラー時に文字と背景の色が同化して嫌なので
+highlight ALEWarning ctermfg=160
+highlight ALEError ctermfg=160
+" Setting end
 
 highlight Cursorline cterm=NONE ctermfg=NONE ctermbg=black
+highlight LineNr ctermfg=235
 inoremap <Tab> <Esc>
 nnoremap : ;
 nnoremap ; :
 set autoindent
+set backspace=indent,eol,start
+set clipboard+=unnamed
 set cursorline
+set encoding=utf-8
 set expandtab
+set fileencodings=utf-8,iso-2022-jp,euc-jp,sjis
+set fileformats=unix,dos,mac
+set history=50		" keep 50 lines of command line history
+set incsearch		" do incremental searching
 set nobackup
+set nocompatible
 set noswapfile
 set noundofile
 set nowrap
+set number
+set ruler		" show the cursor position all the time
+set showcmd		" display incomplete commands
 set smartindent
+
 " Get the 2-space YAML as the default when hit carriage return after the colon
 " https://gist.github.com/dragonken/c29123e597c6fdf022284cf36d245b64
-autocmd FileType yaml setlocal ts=2 sts=2 sw=2 expandtab
-autocmd FileType python setl ts=4 sts=4 sw=4 cinwords=if,elif,else,for,while,try,except,finally,def,class expandtab autoindent smartindent 
-autocmd FileType ruby setl ts=2 sts=2 sw=2 autoindent
-autocmd FileType sh setlocal ts=2 sts=2 sw=2 expandtab smartindent
-" https://qiita.com/simeji/items/35037bb2a240e4e72cec
-set clipboard+=unnamed
+autocmd FileType html setlocal ts=2 sts=2 sw=2 expandtab
+autocmd FileType python setl ts=4 sts=4 sw=4 cinwords=if,elif,else,for,while,try,except,finally,def,class expandtab
+autocmd FileType java setl ts=4 sts=4 sw=4 expandtab
+autocmd FileType ruby setl ts=2 sts=2 sw=2 expandtab
+autocmd FileType sh setlocal ts=2 sts=2 sw=2 expandtab
+autocmd FileType yaml setlocal ts=2 sts=2 sw=2
+" http://www.kamakuraheart.org/wordpress/?p=3995
+" tab+enterで開いているファイルを実行
+autocmd BufNewFile,BufRead *.py nnoremap <tab> :!python %
+autocmd BufNewFile,BufRead *.java nnoremap <tab> :!javac % && java %<
 
 " https://qiita.com/kouichi_c/items/e19ccf94b8e5ab6ed18e
 " 2019/01/04
@@ -124,17 +172,11 @@ Plug 'tpope/vim-markdown'
 Plug 'kannokanno/previm'
 Plug 'tyru/open-browser.vim'
 call plug#end()
-
 """ markdown {{{
 autocmd BufRead,BufNewFile *.mkd  set filetype=markdown
 autocmd BufRead,BufNewFile *.md  set filetype=markdown
 " Need: kannokanno/previm
-nnoremap <silent> <C-p> :PrevimOpen<CR> " Ctrl-pでプレビュー
+nnoremap <silent> <C-i> :PrevimOpen<CR> " Ctrl-iでプレビュー
 " 自動で折りたたまないようにする
 let g:vim_markdown_folding_disabled=1
 let g:previm_enable_realtime = 1
-" }}}
-
-set encoding=utf-8
-set fileencodings=utf-8,iso-2022-jp,euc-jp,sjis
-set fileformats=unix,dos,mac
